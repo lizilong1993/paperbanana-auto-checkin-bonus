@@ -122,7 +122,13 @@ def monitor_and_claim(page: Page, timeout_seconds: int, poll_interval: float) ->
                 page.wait_for_timeout(int(max(3.0, min(5.0, poll_interval)) * 1000))
                 continue
             sleep_seconds = min(compute_sleep_seconds(remain_seconds, poll_interval), float(remain_seconds))
-            print(f"倒计时剩余 {remain_seconds} 秒，等待 {sleep_seconds:.1f} 秒后重试。")
+            
+            def fmt(sec):
+                h = int(sec // 3600)
+                m = int((sec % 3600) // 60)
+                s = int(sec % 60)
+                return f"{h}时{m}分{s}秒"
+            print(f"倒计时剩余 {fmt(remain_seconds)}，等待 {fmt(sleep_seconds)}后重试。")
             page.wait_for_timeout(int(sleep_seconds * 1000))
     finally:
         set_system_keep_awake(False)
